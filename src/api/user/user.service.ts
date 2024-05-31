@@ -12,7 +12,6 @@ export class UserService {
 
         try {
             const modifiedPayload: any = await prepareAndValidateObject(body, SignupDTO);
-            console.log({ body, modifiedPayload })
             if (modifiedPayload.message == "VALIDATIONS_ERROR")
                 return sendErrorResponse(modifiedPayload.message, 400, modifiedPayload?.error)
             const { email, password, preference } = modifiedPayload;

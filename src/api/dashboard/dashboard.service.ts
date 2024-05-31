@@ -1,24 +1,30 @@
-import { errorNoJobAreFound, errorSomethingWentWrong, successJobListed } from "../../globals/constants";
+import { errorJobDetailsNotFound, errorNoJobAreFound, errorSomethingWentWrong, successJobFound, successJobListed } from "../../globals/constants";
 import { sendErrorResponse, sendSuccessResponse } from "../../globals/error.handler";
 import JobPost from "../../models/job_posts";
 
 
 export class DashboardService {
     constructor() { }
+    escapeRegex(text: string) {
+        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    };
     //#region  job post listing api
     async getDashboardJobsList(query: any) {
         try {
-            const { page = 1, limit = 10, keyword } = query;
+            let { page = 1, limit = 10, keyword } = query;
+            page = +(page ?? 1)
+            limit = +(limit ?? 10)
+
             let filter = {}
             //apply filter 
             if (keyword) {
+                const regexSearch = this.escapeRegex(keyword)
                 filter = {
-                    $or: [
-                        { job_name: { $regex: keyword, $options: 'i' } },
-                        { company_name: { $regex: keyword, $options: 'i' } },
-                        { job_full_text: { $regex: keyword, $options: 'i' } },
-                    ],
+                    job_name: { $regex: regexSearch, $options: 'i' }
                 };
+                // filter = {
+                //     job_name: { $regex: regexSearch, $options: 'i' }
+                // };
             }
             //get job list from collection
             const jobPostsResponse = await JobPost.aggregate([
@@ -57,7 +63,24 @@ export class DashboardService {
             };
             return sendSuccessResponse(successJobListed, 200, response)
         } catch (err) {
+            console.log({ err })
             return sendErrorResponse(errorSomethingWentWrong, 500, err)
+        }
+    }
+    //#endregion
+
+    //#region  get job details
+    async getJobDetails(body: any) {
+        try {
+            const { jobId } = body
+            //get job details
+            const jobPostsResponse = await JobPost.findOne({ _id: jobId })
+            if (!jobPostsResponse) return sendErrorResponse(errorJobDetailsNotFound, 400)
+            return sendSuccessResponse(successJobFound, 200, jobPostsResponse)
+
+        } catch (err) {
+            return sendErrorResponse(errorSomethingWentWrong, 500, err)
+
         }
     }
     //#endregion
