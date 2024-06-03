@@ -36,10 +36,8 @@ const seedData = async (count: number) => {
         }
 
         await JobPost.insertMany(jobPosts);
-        console.log('Data seeded successfully');
         process.exit(0);
     } catch (err) {
-        console.error(err);
         process.exit(1);
     }
 };

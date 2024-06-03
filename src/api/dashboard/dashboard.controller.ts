@@ -9,12 +9,4 @@ router.get('/list', async (req: Request, res: Response) => {
 });
 //#endregion
 
-//#region job pots details Route
-router.get('/job/:jobId', async (req: Request, res: Response) => {
-    const response = await dashboardService.getJobDetails(req.params)
-    return res.status(response.statusCode).json(response);
-});
-//#endregion
-
-
 export const dashboardRoute = router;

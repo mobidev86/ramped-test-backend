@@ -1,7 +1,6 @@
 export const errorUserAlreadyExists = 'User already exists'
 export const errorSomethingWentWrong = 'Something went wrong'
-export const errorInvalidUserEmail = 'User email doest not exists'
-export const errorIncorrectPassword = 'User password is incorrect'
+export const errorInvalidCredential = "Invalid credential"
 export const errorAuthenticationFailed = 'Authentication failed'
 export const errorNoJobAreFound = 'Job posts not found'
 export const errorJobDetailsNotFound = 'Job detail not found'

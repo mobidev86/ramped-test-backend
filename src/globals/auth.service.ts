@@ -6,9 +6,9 @@ interface AuthRequest extends Request {
     user?: string;
 }
 
+//#region  auth service
 const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
     const token = req.header('authorization');
-
     if (!token)
         return res.status(401).send({ message: errorAuthenticationFailed })
     try {
@@ -19,5 +19,6 @@ const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
     }
     next();
 };
+//#endregion
 export default auth;
 export { AuthRequest };

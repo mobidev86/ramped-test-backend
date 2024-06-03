@@ -1,5 +1,6 @@
 import { validate } from "class-validator"
 
+//#region  common error response
 export const sendErrorResponse = (message: null | string = null, statusCode: number, error: any = null) => {
     return {
         message: message ?? "Something went to wrong",
@@ -8,6 +9,9 @@ export const sendErrorResponse = (message: null | string = null, statusCode: num
         error: error ?? undefined
     }
 }
+//#endregion
+
+//#region  common success response
 export const sendSuccessResponse = (message: null | string = null, statusCode: number, data: any = null) => {
     return {
         message: message ?? "Success",
@@ -16,7 +20,9 @@ export const sendSuccessResponse = (message: null | string = null, statusCode: n
         data: data ?? undefined
     }
 }
+//#endregion
 
+//#region  check and validate the request data
 export const prepareAndValidateObject = async (payload: any, Validator: any) => {
     const validation = new Validator()
     payload = typeof payload == 'object' ? payload : {}
@@ -32,5 +38,5 @@ export const prepareAndValidateObject = async (payload: any, Validator: any) => 
         return { message: 'VALIDATIONS_ERROR', error: errorsInfo }
     }
     return validation
-
 }
+//#endregion

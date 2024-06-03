@@ -1,4 +1,4 @@
-import { errorIncorrectPassword, errorInvalidUserEmail, errorSomethingWentWrong, errorUserAlreadyExists, successUserCreated, successUserLoggedIn } from "../../globals/constants";
+import { errorInvalidCredential, errorSomethingWentWrong, errorUserAlreadyExists, successUserCreated, successUserLoggedIn } from "../../globals/constants";
 import { generateToken, hashPassword, matchPassword } from "../../globals/crypt.service";
 import { prepareAndValidateObject, sendErrorResponse, sendSuccessResponse } from "../../globals/error.handler";
 import User, { IUser, IUserLogin } from "../../models/user";
@@ -9,7 +9,6 @@ export class UserService {
     constructor() { }
     //#region  user register function
     async funUserRegister(body: IUser) {
-
         try {
             const modifiedPayload: any = await prepareAndValidateObject(body, SignupDTO);
             if (modifiedPayload.message == "VALIDATIONS_ERROR")
@@ -31,6 +30,7 @@ export class UserService {
             await user.save();
             return sendSuccessResponse(successUserCreated, 201);
         } catch (err) {
+            console.log({ err })
             return sendErrorResponse(errorSomethingWentWrong, 500, err)
 
         }
@@ -47,11 +47,11 @@ export class UserService {
             // Check if user exists
             const user = await User.findOne({ email }).select(['_id', 'email', 'password']);
             if (!user)
-                return sendErrorResponse(errorInvalidUserEmail, 400)
+                return sendErrorResponse(errorInvalidCredential, 400)
             // Check if password is correct
             const isMatch = await matchPassword(password, user.password);
             if (!isMatch)
-                return sendErrorResponse(errorIncorrectPassword, 400)
+                return sendErrorResponse(errorInvalidCredential, 400)
             // Generate JWT token
             const payload = {
                 id: user._id,
